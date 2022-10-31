@@ -21,3 +21,24 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+backend/node_modules
+backend/.pnp
+backend/.pnp.js
+
+# testing
+backend/coverage
+
+# production
+backend/build
+
+# misc
+backend/.DS_Store
+backend/.env.local
+backend/.env.development.local
+backend/.env.test.local
+backend/.env.production.local
+
+backend/npm-debug.log*
+backend/yarn-debug.log*
+backend/yarn-error.log*
