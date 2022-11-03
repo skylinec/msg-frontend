@@ -5,21 +5,55 @@ import COSEBilkent from 'cytoscape-cose-bilkent';
 
 Cytoscape.use(COSEBilkent); 
 
+let elementsL = [];
+
 export default class MainGraph extends Component {
-    initListeners()  {
-        this.cy.on('tap', 'node', evt => {
-          var node = evt.target;
-          console.log('tapped ' + node.id());
-        })
-      }
-      componentWillUnmount() {
-        console.log('remove listeners')
-        if (this.cy) {
-          this.cy.removeAllListeners()
-        }
+    constructor(props) {
+        super(props)
+        this.state = {
+            error: null,
+            isLoaded: false,
+            data: []
+        };
       }
 
+    initListeners()  {
+        this.cy.on('tap', 'node', evt => {
+            var node = evt.target;
+            console.log('tapped ' + node.id());
+        })
+    }
+
+    componentWillUnmount() {
+        console.log('remove listeners')
+        if (this.cy) {
+            this.cy.removeAllListeners()
+        }
+    }
+
+    componentDidMount() {
+        fetch('http://localhost:6001/api/tracks')
+        .then(res => res.json())
+        .then(
+            (result) => {
+            this.setState({
+                isLoaded: true,
+                data: result
+            });
+            },
+            (error) => {
+            this.setState({
+                isLoaded: true,
+                error
+            });
+            }
+        )
+    }
+
     render() { 
+
+        console.log("data",this.state.data)
+
         const elements = [
             { data: { id: "one", label: "Comp1", type: 'comp' }, },
             { data: { id: "two", label: "Node 2" }, },
@@ -33,6 +67,9 @@ export default class MainGraph extends Component {
                 }
             }
         ];
+
+        let dataLength = Object.keys(this.state.data).length;
+        console.log(dataLength)
 
         const layout = { name: 'cose-bilkent' };
 
