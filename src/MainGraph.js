@@ -1,6 +1,7 @@
 import { React, Component } from 'react';
 import Cytoscape from 'cytoscape';
 import CytoscapeComponent from "react-cytoscapejs";
+import { useEffect } from 'react';
 import COSEBilkent from 'cytoscape-cose-bilkent';
 
 Cytoscape.use(COSEBilkent); 
@@ -13,7 +14,6 @@ export default class MainGraph extends Component {
         this.state = {
             error: null,
             isLoaded: false,
-            data: []
         };
       }
 
@@ -32,51 +32,37 @@ export default class MainGraph extends Component {
     }
 
     componentDidMount() {
-        fetch('http://localhost:6001/api/tracks')
-        .then(res => res.json())
-        .then(
-            (result) => {
-            this.setState({
-                isLoaded: true,
-                data: result
-            });
-            },
-            (error) => {
-            this.setState({
-                isLoaded: true,
-                error
-            });
-            }
-        )
+
     }
 
     render() { 
 
-        console.log("data",this.state.data)
+        // console.log("data",this.props.data)
 
-        const elements = [
-            { data: { id: "one", label: "Comp1", type: 'comp' }, },
-            { data: { id: "two", label: "Node 2" }, },
-            { data: { id: "three", label: "Node 3" }, },
-            { data: { id: "four", label: "Node 3" }, position: { x: 20, y: 200 } },
-            {
-                data: {
-                source: "one",
-                target: "two",
-                label: "Edge from Node1 to Node2"
-                }
-            }
-        ];
+        let elements_list = [];
 
-        let dataLength = Object.keys(this.state.data).length;
+        let dataLength = Object.keys(this.props.data).length;
         console.log(dataLength)
+
+        for(let i = 0; i < dataLength; i++) {
+            console.log("Data number",i,this.props.data[i])
+
+            elements_list.push(
+                {
+                    data: {
+                        id: this.props.data[i]._id,
+                        label: this.props.data[i].fileName
+                    }
+                }
+            )
+        }
 
         const layout = { name: 'cose-bilkent' };
 
         return (
             <div className="MainGraph">
                 <CytoscapeComponent
-                    elements={elements}
+                    elements={elements_list}
                     layout={layout}
                     cy={cy => {
                     this.cy = cy

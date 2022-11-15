@@ -9,10 +9,15 @@ router.get("/tracks", async (req, res) => {
 })
 
 router.post("/tracks", async (req, res) => {
+    // console.log("Req", req)
+
     const track = new Track({
         fileName: req.body.fileName,
+        genre: req.body.genre,
         centroid: req.body.centroid,
+        rmse: req.body.rmse,
         bandwidth: req.body.bandwidth,
+        rolloff: req.body.rolloff,
         contrast: req.body.contrast,
         tempo: req.body.tempo
     })
