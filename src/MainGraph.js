@@ -1,12 +1,9 @@
 import { React, Component } from 'react';
 import Cytoscape from 'cytoscape';
 import CytoscapeComponent from "react-cytoscapejs";
-import { useEffect } from 'react';
-import COSEBilkent from 'cytoscape-cose-bilkent';
+import avsdf from 'cytoscape-avsdf';
 
-Cytoscape.use(COSEBilkent); 
-
-let elementsL = [];
+Cytoscape.use(avsdf); 
 
 export default class MainGraph extends Component {
     constructor(props) {
@@ -14,6 +11,7 @@ export default class MainGraph extends Component {
         this.state = {
             error: null,
             isLoaded: false,
+            elementsList: []
         };
       }
 
@@ -35,19 +33,22 @@ export default class MainGraph extends Component {
 
     }
 
+    buildLinks() {
+            
+    }
+
     render() { 
 
         // console.log("data",this.props.data)
 
-        let elements_list = [];
-
         let dataLength = Object.keys(this.props.data).length;
         console.log(dataLength)
 
+        // Create node list
         for(let i = 0; i < dataLength; i++) {
             console.log("Data number",i,this.props.data[i])
 
-            elements_list.push(
+            this.state.elementsList.push(
                 {
                     data: {
                         id: this.props.data[i]._id,
@@ -57,16 +58,19 @@ export default class MainGraph extends Component {
             )
         }
 
-        const layout = { name: 'cose-bilkent' };
+        const layout = { 
+            name: 'avsdf',
+            nodeSeparation: 240
+        };
 
         return (
             <div className="MainGraph">
                 <CytoscapeComponent
-                    elements={elements_list}
+                    elements={this.state.elementsList}
                     layout={layout}
                     cy={cy => {
-                    this.cy = cy
-                    this.initListeners()
+                        this.cy = cy
+                        this.initListeners()
                     }}
                     stylesheet={[
                     {

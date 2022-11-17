@@ -28,4 +28,16 @@ router.post("/tracks", async (req, res) => {
     res.send(track);
 })
 
+router.post("/cleartracks", async (req, res) => {
+    console.log("CLEARING DATABASE")
+
+    await Track.deleteMany({})
+
+    console.log("DATABASE CLEARED")
+
+    res.send({
+        "message": "Cleared successfully"
+    })
+})
+
 module.exports = router
