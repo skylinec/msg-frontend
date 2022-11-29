@@ -2,11 +2,25 @@ const express = require("express")
 const Track = require("./models/Track") // new
 const router = express.Router()
 const WebSocketServer = require("ws");
-const mongoose = require("mongoose")
+const {PythonShell} =require('python-shell');
+// const mongoose = require("mongoose")
 
 const wss = new WebSocketServer.Server({ port: 9000 })
 
-const conn = mongoose.connect("mongodb://localhost:27017/msg", { useNewUrlParser: true });
+let options = {
+    // mode: 'text',
+    pythonPath: '/Users/matt/opt/anaconda3/envs/native/bin/python',
+    scriptPath: '../../msg-backend/',
+    // pythonOptions: ['-u'], // get print results in real-time
+};
+
+// let ogShell = new PythonShell('backend.py', options)
+
+// ogShell.on("message", function (message) {
+//     console.log(message);
+//   });
+
+// const conn = mongoose.connect("mongodb://localhost:27017/msg", { useNewUrlParser: true });
 
 // Creating connection using websocket
 wss.on("connection", ws => {
@@ -35,7 +49,7 @@ router.get("/tracks", async (req, res) => {
 router.post("/check_if_exists", async (req, res) => {
     Track.exists({fileName:req.body.fileName}, function (err, doc) {
         if (err){
-            res.send({})
+            res.send(err)
         }else{
             console.log("Result :", doc) // true
             res.send(doc)
@@ -49,6 +63,8 @@ router.post("/remove", async (req, res) => {
 
     Track.find({fileName:req.body.fileName}).remove(function (err, doc) {
         console.log("Removing..", doc)
+
+        res.send(doc)
     })
 })
 
@@ -58,6 +74,7 @@ router.post("/tracks", async (req, res) => {
     const track = new Track({
         fileName: req.body.fileName,
         genre: req.body.genre,
+        key: req.body.key,
         centroid: req.body.centroid,
         rmse: req.body.rmse,
         bandwidth: req.body.bandwidth,
@@ -81,6 +98,10 @@ router.post("/da", async(req, res) => {
     });
 
     res.send("Done!");
+})
+
+router.post("/restart_backend", async(req, res) => {
+    // ogShell.kill()
 })
 
 router.post("/cleartracks", async (req, res) => {

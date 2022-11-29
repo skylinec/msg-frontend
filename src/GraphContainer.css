@@ -1,0 +1,24 @@
+.GraphContainer {
+    background-color: black;
+}
+
+#header {
+    color: aqua;
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    left: 100;
+    background-color: grey;
+}
+
+.cGraphChild {
+    position: relative;
+}
+
+.noClick {
+    /* pointer-events: none; */
+}
+
+h1 {
+    font-family: 'Inconsolata', cursive;
+}

@@ -4,6 +4,7 @@ const mongoose = require("mongoose")
 const schema = mongoose.Schema({
 	fileName: String,
     genre: String,
+    key: String,
     rmse: mongoose.Schema.Types.Number,
 	centroid: mongoose.Schema.Types.Number,
     bandwidth: mongoose.Schema.Types.Number,
