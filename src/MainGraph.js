@@ -2,7 +2,8 @@ import { React, Component } from 'react';
 import Cytoscape from 'cytoscape';
 import CytoscapeComponent from "react-cytoscapejs";
 import avsdf from 'cytoscape-avsdf';
-import {roundTo, roundToUp, roundToDown} from 'round-to';
+// import cola from 'cytoscape-cola';
+// import {roundTo, roundToUp, roundToDown} from 'round-to';
 
 Cytoscape.use(avsdf); 
 
@@ -72,7 +73,7 @@ export default class MainGraph extends Component {
         // Centroid comparison
         for(let i=0; i<dataLength; i++){
             for(let j=i + 1; j<dataLength; j++){
-               if(this.roundToNearest(this.props.data[i].centroid, 500) == this.roundToNearest(this.props.data[j].centroid, 500)){
+               if(this.roundToNearest(this.props.data[i].centroid, 100) === this.roundToNearest(this.props.data[j].centroid, 100)){
                 //   console.log(this.props.data[i].fileName,this.roundToNearest(this.props.data[i].centroid, 500))
                 //   console.log(this.props.data[j].fileName,this.roundToNearest(this.props.data[j].centroid, 500))
 
@@ -94,7 +95,7 @@ export default class MainGraph extends Component {
         // Bandwidth comparison
         for(let i=0; i<dataLength; i++){
             for(let j=i + 1; j<dataLength; j++){
-               if(this.roundToNearest(this.props.data[i].bandwidth, 1000) == this.roundToNearest(this.props.data[j].bandwidth, 1000)){
+               if(this.roundToNearest(this.props.data[i].bandwidth, 200) === this.roundToNearest(this.props.data[j].bandwidth, 200)){
                 //   console.log(this.props.data[i].fileName,this.roundToNearest(this.props.data[i].bandwidth, 1000))
                 //   console.log(this.props.data[j].fileName,this.roundToNearest(this.props.data[j].bandwidth, 1000))
 
@@ -116,7 +117,7 @@ export default class MainGraph extends Component {
         // Rolloff comparison
         for(let i=0; i<dataLength; i++){
             for(let j=i + 1; j<dataLength; j++){
-               if(this.roundToNearest(this.props.data[i].rolloff, 1000) == this.roundToNearest(this.props.data[j].rolloff, 1000)){
+               if(this.roundToNearest(this.props.data[i].rolloff, 200) === this.roundToNearest(this.props.data[j].rolloff, 200)){
                 //   console.log(this.props.data[i].fileName,this.roundToNearest(this.props.data[i].rolloff, 1000))
                 //   console.log(this.props.data[j].fileName,this.roundToNearest(this.props.data[j].rolloff, 1000))
 
@@ -138,7 +139,7 @@ export default class MainGraph extends Component {
         // Tempo comparison
         for(let i=0; i<dataLength; i++){
             for(let j=i + 1; j<dataLength; j++){
-               if(this.roundToNearest(this.props.data[i].tempo, 50) == this.roundToNearest(this.props.data[j].tempo, 50)){
+               if(this.props.data[i].tempo === this.props.data[j].tempo){
                 //   console.log(this.props.data[i].fileName,this.roundToNearest(this.props.data[i].tempo, 50))
                 //   console.log(this.props.data[j].fileName,this.roundToNearest(this.props.data[j].tempo, 50))
 
@@ -157,31 +158,50 @@ export default class MainGraph extends Component {
             }
         }
 
-        // Contrast comparison
-        for(let i=0; i<dataLength; i++){
-            for(let j=i + 1; j<dataLength; j++){
-               if(this.props.data[i].contrast == this.props.data[j].contrast){
-                //   console.log(this.props.data[i].fileName,this.props.data[i].contrast)
-                //   console.log(this.props.data[j].fileName,this.props.data[j].contrast)
+        // // Contrast comparison
+        // for(let i=0; i<dataLength; i++){
+        //     for(let j=i + 1; j<dataLength; j++){
+        //        if(this.props.data[i].contrast == this.props.data[j].contrast){
+        //         //   console.log(this.props.data[i].fileName,this.props.data[i].contrast)
+        //         //   console.log(this.props.data[j].fileName,this.props.data[j].contrast)
 
-                  this.state.elementsList.push(
-                    {
-                        data: {
-                            id: "contrast "+this.props.data[i].fileName+this.props.data[j].fileName,
-                            source: this.props.data[i]._id,
-                            target: this.props.data[j]._id,
-                            label: "contrast",
-                            colour:'#D5DE14'
-                        }
-                    }
-                )
-               }
-            }
-        }
+        //           this.state.elementsList.push(
+        //             {
+        //                 data: {
+        //                     id: "contrast "+this.props.data[i].fileName+this.props.data[j].fileName,
+        //                     source: this.props.data[i]._id,
+        //                     target: this.props.data[j]._id,
+        //                     label: "contrast",
+        //                     colour:'#D5DE14'
+        //                 }
+        //             }
+        //         )
+        //        }
+        //     }
+        // }
 
         const layout = { 
-            name: 'avsdf',
-            nodeSeparation: 240
+            name: "avsdf",
+            // Called on `layoutready`
+            ready: function () {
+            },
+            // Called on `layoutstop`
+            stop: function () {
+            },
+            // number of ticks per frame; higher is faster but more jerky
+            refresh: 30,
+            // Whether to fit the network view after when done
+            fit: true,
+            // Padding on fit
+            padding: 10,
+            // Prevent the user grabbing nodes during the layout (usually with animate:true)
+            ungrabifyWhileSimulating: false,
+            // Type of layout animation. The option set is {'during', 'end', false}
+            animate: 'end',
+            // Duration for animate:end
+            animationDuration: 500,   
+            // How apart the nodes are
+            nodeSeparation: 300
         };
 
         return (
@@ -192,13 +212,15 @@ export default class MainGraph extends Component {
                     cy={cy => {
                         this.cy = cy
                         this.initListeners()
+                        // cy.zoomingEnabled = true;
                     }}
                     stylesheet={[
                     {
                         selector: 'node',
                         style: {
-                        'background-color': '#282',
+                        'background-color': 'white',
                         'label': 'data(label)',
+                        'color': 'white'
                         //opacity: 0.3
                         }
                     },
@@ -230,8 +252,9 @@ export default class MainGraph extends Component {
                           "label": "data(label)",
                           "text-rotation": "autorotate",
                           "font-size": "7px",
+                          "color": "white",
                           "text-margin-x": "0px",
-                          "text-margin-y": "20px"
+                          "text-margin-y": "0px"
                         }
                       },
                     ]}
