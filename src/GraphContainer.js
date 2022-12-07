@@ -1,13 +1,13 @@
 import { React, Component } from 'react';
 import './GraphContainer.css';
-import Checkbox from './Checkbox'
+// import Checkbox from './Checkbox'
 // import MainGraph from './MainGraph';
 import { w3cwebsocket as W3CWebSocket } from "websocket";
-import Dropzone from 'react-dropzone'
+// import Dropzone from 'react-dropzone'
 
 const client = new W3CWebSocket('ws://localhost:9000');
 
-const maxSize = 1048576; //1mb
+// const maxSize = 1048576; //1mb
 export default class GraphContainer extends Component {
     constructor(props) {
         super();
@@ -98,7 +98,7 @@ export default class GraphContainer extends Component {
         e.preventDefault();
         e.nativeEvent.stopImmediatePropagation();
 
-        if (e.type == "dragenter" || e.type == "dragover") {
+        if (e.type === "dragenter" || e.type === "dragover") {
             this.setDragActive = true;
         } else if (e.type === "dragleave") {
             this.setDragActive = false;
