@@ -1,5 +1,6 @@
 const express = require("express")
 const Track = require("./models/Track") // new
+const Similarity = require("./models/Similarity")
 const router = express.Router()
 const WebSocketServer = require("ws");
 const {PythonShell} =require('python-shell');
@@ -46,6 +47,14 @@ router.get("/tracks", async (req, res) => {
 	res.send(tracks)
 })
 
+router.get("/get_tracks_count", async (req, res) => {
+	const tracks = await Track.find()
+    let track_count = Object.keys(tracks).length;
+	res.send({
+        "track_count": track_count
+    })
+})
+
 router.post("/check_if_exists", async (req, res) => {
     Track.exists({fileName:req.body.fileName}, function (err, doc) {
         if (err){
@@ -83,11 +92,30 @@ router.post("/tracks", async (req, res) => {
         tempo: req.body.tempo
     })
 
-    console.log("Posting... " + track);
+    console.log("[TRACKS] Posting track... " + track);
 
     await track.save();
     
     res.send(track);
+})
+
+router.post("/similarities", async (req, res) => {
+    // console.log("Req", req)
+
+    const similarity = new Similarity({
+        id: req.body.id,
+	    source: req.body.source,
+        target: req.body.target,
+        label: req.body.label,
+        colour: req.body.colour,
+        rank: req.body.rank,
+    })
+
+    console.log("[SIMILARITIES] Posting similarity... " + similarity);
+
+    await similarity.save();
+    
+    res.send(similarity);
 })
 
 router.post("/da", async(req, res) => {
@@ -104,12 +132,24 @@ router.post("/restart_backend", async(req, res) => {
     // ogShell.kill()
 })
 
-router.post("/cleartracks", async (req, res) => {
-    console.log("CLEARING DATABASE")
+router.post("/clear_tracks", async (req, res) => {
+    console.log("[TRACKS] CLEARING DATABASE")
 
     await Track.deleteMany({})
 
-    console.log("DATABASE CLEARED")
+    console.log("[TRACKS] DATABASE CLEARED")
+
+    res.send({
+        "message": "Cleared successfully"
+    })
+})
+
+router.post("/clear_similarities", async (req, res) => {
+    console.log("[SIMILARITIES] CLEARING DATABASE")
+
+    await Similarity.deleteMany({})
+
+    console.log("[SIMILARITIES] DATABASE CLEARED")
 
     res.send({
         "message": "Cleared successfully"
