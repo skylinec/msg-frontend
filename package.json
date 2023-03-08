@@ -33,7 +33,7 @@
     "websocket": "^1.0.34"
   },
   "scripts": {
-    "start": "craco start",
+    "start": "concurrently 'craco start' 'npm --prefix ./backend/ run start'",
     "build": "craco build",
     "test": "craco test"
   },
