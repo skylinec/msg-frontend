@@ -34,6 +34,7 @@
   },
   "scripts": {
     "start": "concurrently 'craco start' 'npm --prefix ./backend/ run start'",
+    "start-all": "concurrently 'craco start' 'npm --prefix ./backend/ run start' 'python ../msg-backend/backend.py'",
     "build": "craco build",
     "test": "craco test"
   },
