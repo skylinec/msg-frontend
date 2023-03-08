@@ -47,6 +47,12 @@ router.get("/tracks", async (req, res) => {
 	res.send(tracks)
 })
 
+// Get all posts
+router.get("/similarities", async (req, res) => {
+	const similarities = await Similarity.find()
+	res.send(similarities)
+})
+
 router.get("/get_tracks_count", async (req, res) => {
 	const tracks = await Track.find()
     let track_count = Object.keys(tracks).length;

@@ -13,7 +13,8 @@ export default class GraphContainer extends Component {
         super();
 
         this.state = {
-            dataIsReturned : false,
+            tracksDataIsReturned : false,
+            similaritiesDataIsReturned: false,
             showingDescription: false,
             showTempo: true,
             showRMSE: true,
@@ -32,7 +33,8 @@ export default class GraphContainer extends Component {
     fetchData() {
         console.log("FETCHING DATA...")
         this.setState({
-            dataIsReturned : false
+            tracksDataIsReturned : false,
+            similaritiesDataIsReturned: false
         })
         
         fetch('http://localhost:6001/api/tracks')
@@ -42,8 +44,21 @@ export default class GraphContainer extends Component {
                 this.GraphChild = obj.default;
                 this.setState(
                     { 
-                        dataIsReturned : true,
-                        data: dataResult
+                        tracksDataIsReturned : true,
+                        tracksData: dataResult
+                    }
+                );
+            })
+
+        fetch('http://localhost:6001/api/similarities')
+            .then(res => res.json())
+            .then(async (dataResult) => {
+                let obj = await import('./MainGraph');
+                this.GraphChild = obj.default;
+                this.setState(
+                    { 
+                        similaritiesDataIsReturned : true,
+                        similaritiesData: dataResult
                     }
                 );
             })
@@ -146,7 +161,7 @@ export default class GraphContainer extends Component {
                 <div className='cGraphChild'>
                     <form id="form-file-upload" onDragEnter={(e) => this.onDrop(e)} onSubmit={(e) => e.preventDefault()}>
                         <input type="file" id="input-file-upload" multiple={true} />
-                        { this.state.dataIsReturned ? <this.GraphChild data={this.state.data}/> : <h1> Loading </h1>}
+                        { (this.state.tracksDataIsReturned && this.state.similaritiesDataIsReturned) ? <this.GraphChild tracksData={this.state.tracksData} similaritiesData={this.state.similaritiesData}/> : <h1> Loading </h1>}
                     </form>
                 </div>
             </div>

@@ -53,110 +53,122 @@ export default class MainGraph extends Component {
 
         // console.log("data",this.props.data)
 
-        let dataLength = Object.keys(this.props.data).length;
-        // console.log(dataLength)
-
-        // Create node list
-        for(let i = 0; i < dataLength; i++) {
+        let tracksDataLength = Object.keys(this.props.tracksData).length;
+        for(let i = 0; i < tracksDataLength; i++) {
             // console.log("Data number",i,this.props.data[i])
 
             this.state.elementsList.push(
                 {
                     data: {
-                        id: this.props.data[i]._id,
-                        label: this.props.data[i].fileName
+                        id: this.props.tracksData[i]._id,
+                        label: this.props.tracksData[i].fileName
                     }
                 }
             )
         }
 
-        // Centroid comparison
-        for(let i=0; i<dataLength; i++){
-            for(let j=i + 1; j<dataLength; j++){
-               if(this.roundToNearest(this.props.data[i].centroid, 100) === this.roundToNearest(this.props.data[j].centroid, 100)){
-                //   console.log(this.props.data[i].fileName,this.roundToNearest(this.props.data[i].centroid, 500))
-                //   console.log(this.props.data[j].fileName,this.roundToNearest(this.props.data[j].centroid, 500))
-
-                  this.state.elementsList.push(
-                    {
-                        data: {
-                            id: "centroid "+this.props.data[i].fileName+this.props.data[j].fileName,
-                            source: this.props.data[i]._id,
-                            target: this.props.data[j]._id,
-                            label: "centroid",
-                            colour:'#DE3C1A'
-                        }
+        let similaritiesDataLength = Object.keys(this.props.similaritiesData).length;
+        for(let i = 0; i < similaritiesDataLength; i++) {
+            this.state.elementsList.push(
+                {
+                    data: {
+                        id: this.props.similaritiesData[i].id,
+                        source: this.props.similaritiesData[i].source,
+                        target: this.props.similaritiesData[i].target,
+                        label: this.props.similaritiesData[i].label,
+                        colour: this.props.similaritiesData[i].colour
                     }
-                )
-               }
-            }
+                }
+            )
         }
 
-        // Bandwidth comparison
-        for(let i=0; i<dataLength; i++){
-            for(let j=i + 1; j<dataLength; j++){
-               if(this.roundToNearest(this.props.data[i].bandwidth, 200) === this.roundToNearest(this.props.data[j].bandwidth, 200)){
-                //   console.log(this.props.data[i].fileName,this.roundToNearest(this.props.data[i].bandwidth, 1000))
-                //   console.log(this.props.data[j].fileName,this.roundToNearest(this.props.data[j].bandwidth, 1000))
+        // // Centroid comparison
+        // for(let i=0; i<dataLength; i++){
+        //     for(let j=i + 1; j<dataLength; j++){
+        //        if(this.roundToNearest(this.props.data[i].centroid, 100) === this.roundToNearest(this.props.data[j].centroid, 100)){
+        //         //   console.log(this.props.data[i].fileName,this.roundToNearest(this.props.data[i].centroid, 500))
+        //         //   console.log(this.props.data[j].fileName,this.roundToNearest(this.props.data[j].centroid, 500))
 
-                  this.state.elementsList.push(
-                    {
-                        data: {
-                            id: "bandwidth "+this.props.data[i].fileName+this.props.data[j].fileName,
-                            source: this.props.data[i]._id,
-                            target: this.props.data[j]._id,
-                            label: "bandwidth",
-                            colour:'#36BB2D'
-                        }
-                    }
-                )
-               }
-            }
-        }
+        //           this.state.elementsList.push(
+        //             {
+        //                 data: {
+        //                     id: "centroid "+this.props.data[i].fileName+this.props.data[j].fileName,
+        //                     source: this.props.data[i]._id,
+        //                     target: this.props.data[j]._id,
+        //                     label: "centroid",
+        //                     colour:'#DE3C1A'
+        //                 }
+        //             }
+        //         )
+        //        }
+        //     }
+        // }
 
-        // Rolloff comparison
-        for(let i=0; i<dataLength; i++){
-            for(let j=i + 1; j<dataLength; j++){
-               if(this.roundToNearest(this.props.data[i].rolloff, 200) === this.roundToNearest(this.props.data[j].rolloff, 200)){
-                //   console.log(this.props.data[i].fileName,this.roundToNearest(this.props.data[i].rolloff, 1000))
-                //   console.log(this.props.data[j].fileName,this.roundToNearest(this.props.data[j].rolloff, 1000))
+        // // Bandwidth comparison
+        // for(let i=0; i<dataLength; i++){
+        //     for(let j=i + 1; j<dataLength; j++){
+        //        if(this.roundToNearest(this.props.data[i].bandwidth, 200) === this.roundToNearest(this.props.data[j].bandwidth, 200)){
+        //         //   console.log(this.props.data[i].fileName,this.roundToNearest(this.props.data[i].bandwidth, 1000))
+        //         //   console.log(this.props.data[j].fileName,this.roundToNearest(this.props.data[j].bandwidth, 1000))
 
-                  this.state.elementsList.push(
-                    {
-                        data: {
-                            id: "rolloff "+this.props.data[i].fileName+this.props.data[j].fileName,
-                            source: this.props.data[i]._id,
-                            target: this.props.data[j]._id,
-                            label: "rolloff",
-                            colour:'#14DED2'
-                        }
-                    }
-                )
-               }
-            }
-        }
+        //           this.state.elementsList.push(
+        //             {
+        //                 data: {
+        //                     id: "bandwidth "+this.props.data[i].fileName+this.props.data[j].fileName,
+        //                     source: this.props.data[i]._id,
+        //                     target: this.props.data[j]._id,
+        //                     label: "bandwidth",
+        //                     colour:'#36BB2D'
+        //                 }
+        //             }
+        //         )
+        //        }
+        //     }
+        // }
 
-        // Tempo comparison
-        for(let i=0; i<dataLength; i++){
-            for(let j=i + 1; j<dataLength; j++){
-               if(this.props.data[i].tempo === this.props.data[j].tempo){
-                //   console.log(this.props.data[i].fileName,this.roundToNearest(this.props.data[i].tempo, 50))
-                //   console.log(this.props.data[j].fileName,this.roundToNearest(this.props.data[j].tempo, 50))
+        // // Rolloff comparison
+        // for(let i=0; i<dataLength; i++){
+        //     for(let j=i + 1; j<dataLength; j++){
+        //        if(this.roundToNearest(this.props.data[i].rolloff, 200) === this.roundToNearest(this.props.data[j].rolloff, 200)){
+        //         //   console.log(this.props.data[i].fileName,this.roundToNearest(this.props.data[i].rolloff, 1000))
+        //         //   console.log(this.props.data[j].fileName,this.roundToNearest(this.props.data[j].rolloff, 1000))
 
-                  this.state.elementsList.push(
-                    {
-                        data: {
-                            id: "tempo "+this.props.data[i].fileName+this.props.data[j].fileName,
-                            source: this.props.data[i]._id,
-                            target: this.props.data[j]._id,
-                            label: "tempo",
-                            colour:'#DE14CF'
-                        }
-                    }
-                )
-               }
-            }
-        }
+        //           this.state.elementsList.push(
+        //             {
+        //                 data: {
+        //                     id: "rolloff "+this.props.data[i].fileName+this.props.data[j].fileName,
+        //                     source: this.props.data[i]._id,
+        //                     target: this.props.data[j]._id,
+        //                     label: "rolloff",
+        //                     colour:'#14DED2'
+        //                 }
+        //             }
+        //         )
+        //        }
+        //     }
+        // }
+
+        // // Tempo comparison
+        // for(let i=0; i<dataLength; i++){
+        //     for(let j=i + 1; j<dataLength; j++){
+        //        if(this.props.data[i].tempo === this.props.data[j].tempo){
+        //         //   console.log(this.props.data[i].fileName,this.roundToNearest(this.props.data[i].tempo, 50))
+        //         //   console.log(this.props.data[j].fileName,this.roundToNearest(this.props.data[j].tempo, 50))
+
+        //           this.state.elementsList.push(
+        //             {
+        //                 data: {
+        //                     id: "tempo "+this.props.data[i].fileName+this.props.data[j].fileName,
+        //                     source: this.props.data[i]._id,
+        //                     target: this.props.data[j]._id,
+        //                     label: "tempo",
+        //                     colour:'#DE14CF'
+        //                 }
+        //             }
+        //         )
+        //        }
+        //     }
+        // }
 
         // // Contrast comparison
         // for(let i=0; i<dataLength; i++){
