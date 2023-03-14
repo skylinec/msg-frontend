@@ -6,6 +6,7 @@
     "node": "16.x"
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.6",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -16,6 +17,7 @@
     "cytoscape-cola": "^2.5.1",
     "cytoscape-cose-bilkent": "^4.1.0",
     "cytoscape-cxtmenu": "^3.4.0",
+    "cytoscape-popper": "^2.0.0",
     "cytoscape-spread": "^3.0.0",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
@@ -28,7 +30,9 @@
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-scripts": "5.0.1",
+    "react-spinners": "^0.13.8",
     "round-to": "^6.0.0",
+    "tippy.js": "^6.3.7",
     "web-vitals": "^2.1.4",
     "websocket": "^1.0.34"
   },

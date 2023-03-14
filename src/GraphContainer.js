@@ -20,14 +20,50 @@ export default class GraphContainer extends Component {
             showRMSE: true,
             showContrast: true,
             dragActive: false,
-            setDragActive: false
+            setDragActive: false,
+            locked: false,
         }
+        
+        console.log("INITIAL STATE",this.state)
 
+        this.handleChange = this.handleChange.bind(this);
         this.toggleDescription = this.toggleDescription.bind(this);
     }
 
     trackChange(data) {
         console.log("CHANGE",data)
+    }
+
+    handleChange(event){
+        console.log("values",event.target,event.target.value,event.target.name)
+
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+
+        this.setState({
+            [name]: value
+        })
+
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                "centroidSim": this.state.centroidSim,
+                "contrastSim": this.state.contrastSim,
+                "bandwidthSim": this.state.bandwidthSim,
+                "rolloffSim": this.state.rolloffSim,
+                "rmseSim": this.state.rmseSim,
+                "zcrSim": this.state.zcrSim,
+                "mfccSim": this.state.mfccSim,
+                "chromaStftSim": this.state.chromaStftSim
+            })
+        };
+        fetch('http://localhost:6001/api/settings', requestOptions)
+            .then(res => res.json())
+            .then(async (dataResult) => {
+                console.log("SETTINGS RESULT",dataResult)
+            });
     }
 
     fetchData() {
@@ -36,6 +72,46 @@ export default class GraphContainer extends Component {
             tracksDataIsReturned : false,
             similaritiesDataIsReturned: false
         })
+
+        const requestOptions = {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        };
+
+        fetch('http://localhost:6001/api/settings', requestOptions)
+            .then(res => res.json())
+            .then(async (dataResult) => {
+                console.log("SETTINGS RESULT",dataResult[0])
+                console.log("SETTINGS CENTROID",dataResult[0].centroidSim)
+                let n_result = dataResult[0]
+                this.setState({
+                    centroidSim: n_result.centroidSim,
+                    contrastSim: n_result.contrastSim,
+                    bandwidthSim: n_result.bandwidthSim,
+                    rolloffSim: n_result.rolloffSim,
+                    rmseSim: n_result.rmseSim,
+                    zcrSim: n_result.zcrSim,
+                    mfccSim: n_result.mfccSim,
+                    chromaStftSim: n_result.chromaStftSim
+                })
+            });
+
+        
+
+        fetch('http://localhost:6001/api/check_lock')
+            .then(res => res.json())
+            .then(async (dataResult) => {
+                let value = dataResult.val
+
+                console.log("LOCK RESULT",value)
+                // console.log("LOCK RESULT DR",dataResult)
+
+                if(value === "LOCKED"){
+                    this.state.locked = true
+                } else if (value === "UNLOCKED"){
+                    this.state.locked = false
+                }
+            })
         
         fetch('http://localhost:6001/api/tracks')
             .then(res => res.json())
@@ -62,6 +138,8 @@ export default class GraphContainer extends Component {
                     }
                 );
             })
+
+        console.log("NEW STATE",this.state)
     }
 
     componentDidMount() {
@@ -73,8 +151,32 @@ export default class GraphContainer extends Component {
         };
         
         client.onmessage = (message) => {
-            console.log("Database updated")
-            this.fetchData();
+            console.log("GOT MESSAGE",message)
+            console.log(typeof(message))
+            if (message.data == "CHANGE") {
+                console.log("Database updated")
+                this.fetchData();
+            } else if (message.data == "LOCK") {
+                console.log("Locking UI")
+                this.setState(
+                    { 
+                        locked : true,
+                    }
+                );
+            } else if (message.data == "LOCK OFF") {
+                console.log("Unlocking UI")
+                this.setState(
+                    { 
+                        locked : false,
+                    }
+                );
+            } else if (message.data.split("?")[0] === "STATUS") {
+                let statusMsgD = message.data.split("?")[1]
+                console.log("STATUS MSG",statusMsgD)
+                this.setState({
+                    statusMsg: statusMsgD
+                })
+            }
             // this.setState({});
         };
         client.onerror = function() {
@@ -121,6 +223,7 @@ export default class GraphContainer extends Component {
     }
 
     render() { 
+
         console.log("Rendering GraphContainer")
         let dText = "";
 
@@ -144,6 +247,70 @@ export default class GraphContainer extends Component {
                         <p>Bandwidth<Checkbox name="bandwidth"/></p>
                         <p>Rolloff<Checkbox name="rolloff"/></p>
                     </div> */}
+                <br></br>
+                <i>centroid sim</i>
+                <input
+                    name="centroidSim"
+                    type="number"
+                    value={this.state.centroidSim}
+                    onChange={this.handleChange}
+                />
+                <br></br>
+                <i>contrast sim</i>
+                <input
+                    name="contrastSim"
+                    type="number"
+                    value={this.state.contrastSim}
+                    onChange={this.handleChange}
+                />
+                <br></br>
+                <i>bandwidth sim</i>
+                <input
+                    name="bandwidthSim"
+                    type="number"
+                    value={this.state.bandwidthSim}
+                    onChange={this.handleChange}
+                />
+                <br></br>
+                <i>rolloff sim</i>
+                <input
+                    name="rolloffSim"
+                    type="number"
+                    value={this.state.rolloffSim}
+                    onChange={this.handleChange}
+                />
+                <br></br>
+                <i>rmse sim</i>
+                <input
+                    name="rmseSim"
+                    type="number"
+                    value={this.state.rmseSim}
+                    onChange={this.handleChange}
+                />
+                <br></br>
+                <i>zcr sim</i>
+                <input
+                    name="zcrSim"
+                    type="number"
+                    value={this.state.zcrSim}
+                    onChange={this.handleChange}
+                />
+                <br></br>
+                <i>mfcc sim</i>
+                <input
+                    name="mfccSim"
+                    type="number"
+                    value={this.state.mfccSim}
+                    onChange={this.handleChange}
+                />
+                <br></br>
+                <i>chroma stft sim</i>
+                <input
+                    name="chromaStftSim"
+                    type="number"
+                    value={this.state.chromaStftSim}
+                    onChange={this.handleChange}
+                />
             </p>
         } else {
             dText = <p>Click above to unfold (will also reset graph position)</p>
@@ -153,15 +320,16 @@ export default class GraphContainer extends Component {
             <div className="GraphContainer">
                 <div id='header'>
                     <div onClick={this.toggleDescription}>
-                        <h1 className='noClick'>Musical Similarity Graph</h1>
+                        <h1 className='noClick'>Audio Similarity Graph</h1>
                         <p><il>By Matthew Holloway 2022</il></p>
+                        <p>{this.state.statusMsg}</p>
                     </div>
                     {dText}
                 </div>
                 <div className='cGraphChild'>
                     <form id="form-file-upload" onDragEnter={(e) => this.onDrop(e)} onSubmit={(e) => e.preventDefault()}>
                         <input type="file" id="input-file-upload" multiple={true} />
-                        { (this.state.tracksDataIsReturned && this.state.similaritiesDataIsReturned) ? <this.GraphChild tracksData={this.state.tracksData} similaritiesData={this.state.similaritiesData}/> : <h1> Loading </h1>}
+                        { (this.state.tracksDataIsReturned && this.state.similaritiesDataIsReturned) ? <this.GraphChild tracksData={this.state.tracksData} similaritiesData={this.state.similaritiesData} locked={this.state.locked} statusMsg={this.state.statusMsg}/> : <h1> Loading </h1>}
                     </form>
                 </div>
             </div>
