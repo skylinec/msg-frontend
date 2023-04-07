@@ -204,7 +204,7 @@ router.get("/check_lock", async(req, res) => {
 })
 
 router.post("/send_status_text", async(req, res) => {
-    console.log("SENDING STATUS", req.body.statusText)
+    // console.log("SENDING STATUS", req.body.statusText)
 
     wss.clients.forEach(function each(client) {
         client.send(req.body.statusText)
